@@ -1,5 +1,5 @@
+import React from "react"
 import { css, Global } from "@emotion/core"
-import { h } from "preact"
 
 const GlobalStyle = () => <Global styles={global} />
 

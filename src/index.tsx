@@ -1,5 +1,5 @@
-import { h, render } from "preact"
+import React from "react"
+import ReactDOM from "react-dom"
 import { App } from "./component/App"
 
-const dom = document.getElementById("root") as Element
-render(<App />, dom)
+ReactDOM.render(<App />, document.getElementById("root"))

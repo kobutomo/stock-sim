@@ -5,9 +5,14 @@
   "main": "index.js",
   "dependencies": {
     "@emotion/core": "^10.0.35",
-    "preact": "^10.4.8"
+    "axios": "^0.20.0",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-google-charts": "^3.0.15"
   },
   "devDependencies": {
+    "@types/react": "^16.9.49",
+    "@types/react-dom": "^16.9.8",
     "@types/webpack-env": "^1.15.3",
     "@typescript-eslint/eslint-plugin": "^4.2.0",
     "@typescript-eslint/parser": "^4.2.0",

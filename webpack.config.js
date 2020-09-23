@@ -17,7 +17,10 @@ module.exports = {
     port: 3000,
     hot: true,
     proxy: {
-      "/api": "http://localhost:8080"
+      "/api": {
+        target: "ws://localhost:8080",
+        ws: true
+      }
     }
   },
   devtool: "source-map",
@@ -34,9 +37,6 @@ module.exports = {
     ]
   },
   resolve: {
-    alias: {
-      react: "preact/compat" // first try it with compat you can try preact after if it works
-    },
     extensions: [".ts", ".tsx", ".js", ".json"]
   },
   plugins: [
