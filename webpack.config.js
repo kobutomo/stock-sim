@@ -15,7 +15,10 @@ module.exports = {
     contentBase: `${__dirname}/dist`,
     host: "localhost",
     port: 3000,
-    hot: true
+    hot: true,
+    proxy: {
+      "/api": "http://localhost:8080"
+    }
   },
   devtool: "source-map",
   module: {
