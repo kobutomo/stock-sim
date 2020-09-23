@@ -1,0 +1,18 @@
+{
+  "extends": ["react-app"],
+  "plugins": ["@typescript-eslint", "prettier"],
+  "env": {
+    "browser": true,
+    "es6": true
+  },
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "sourceType": "module",
+    "project": "./tsconfig.json"
+  },
+  "rules": {
+    "no-extra-semi": "error",
+    "prettier/prettier": "error",
+    "react/react-in-jsx-scope": "off"
+  }
+}
