@@ -4,9 +4,9 @@ import GlobalStyle from "./GlobalStyle"
 import Chart from "react-google-charts"
 import styled from "@emotion/styled"
 
-type ChartData = (number | Date | string)[][]
+type ChartData = (number | Date | string | null)[][]
 
-const LABEL: string[] = ["Day", "Low", "Open", "Close", "High"]
+const LABEL: string[] = ["Day", "7", "14", "50", "Low", "Open", "Close", "High"]
 
 type Candle = {
   productCode: string
@@ -23,6 +23,7 @@ type ChartConfig = {
   productCode: string
   duration?: string
   limit?: number
+  sma: boolean
 }
 
 enum ProductCode {
@@ -30,10 +31,16 @@ enum ProductCode {
   BTC_USD = "BTC_USD"
 }
 
+type Sma = {
+  period: number
+  values: number[]
+}
+
 type DataFrameCandle = {
   productCode: ProductCode
   duration: number
   candles: Candle[]
+  smas: Sma[]
 }
 
 let socket: WebSocket
@@ -45,11 +52,12 @@ const DURATIONS = ["1s", "1m", "1h"]
 export const App = () => {
   const [dfCandle, setDfCandle] = useState<DataFrameCandle | null>(null)
   const [chartConfig, setChartConfig] = useState<ChartConfig>({
-    productCode: ProductCode.BTC_JPY
+    productCode: ProductCode.BTC_JPY,
+    sma: true
   })
 
   useEffect(() => {
-    setChartConfig({ productCode: ProductCode.BTC_JPY })
+    setChartConfig({ productCode: ProductCode.BTC_JPY, sma: true })
   }, [])
 
   useEffect(() => {
@@ -61,6 +69,7 @@ export const App = () => {
       url.searchParams.set("limit", chartConfig.limit.toString())
     chartConfig.duration &&
       url.searchParams.set("duration", chartConfig.duration)
+    chartConfig.sma && url.searchParams.set("sma", String(chartConfig.sma))
     const nextSocket = new WebSocket(url.toString())
     nextSocket.onopen = function () {
       console.log("Connection OK\n")
@@ -78,8 +87,17 @@ export const App = () => {
   }, [chartConfig])
 
   const chartData = useMemo<ChartData>(() => {
-    const candleData = dfCandle?.candles.map(data => {
-      return [new Date(data.time), data.low, data.open, data.close, data.high]
+    const candleData = dfCandle?.candles.map((data, i) => {
+      return [
+        new Date(data.time),
+        dfCandle.smas[0]?.values[i] || NaN,
+        dfCandle.smas[1]?.values[i] || NaN,
+        dfCandle.smas[2]?.values[i] || NaN,
+        data.low,
+        data.open,
+        data.close,
+        data.high
+      ]
     })
 
     if (!candleData) return []
@@ -122,18 +140,22 @@ export const App = () => {
         <Chart
           width={"1000px"}
           height={"500px"}
-          chartType="ComboChart"
           loader={<div>Loading Chart</div>}
           data={chartData}
+          chartType="ComboChart"
           options={{
             hAxis: { slantedText: false },
-            seriesType: "candlesticks",
             legend: "none",
             candlestick: {
               fallingColor: { strokeWidth: 0, fill: "#a52714" }, // red
               risingColor: { strokeWidth: 0, fill: "#0f9d58" } // green
             },
-            series: { 4: { type: "line" } }
+            seriesType: "candlesticks",
+            series: {
+              0: { type: "line" },
+              1: { type: "line" },
+              2: { type: "line" }
+            }
           }}
         />
       </div>
